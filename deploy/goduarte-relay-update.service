@@ -1,0 +1,6 @@
+[Unit]
+Description=Pull the latest goduarte-relay from GitHub and apply it
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /opt/goduarte-relay/repo/deploy/update.sh

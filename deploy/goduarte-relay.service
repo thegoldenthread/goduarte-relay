@@ -1,0 +1,18 @@
+[Unit]
+Description=goduarte relay (fixed-IP forwarder for vendor APIs)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=relay
+Group=relay
+ExecStart=/usr/bin/node /opt/goduarte-relay/repo/relay/server.mjs
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

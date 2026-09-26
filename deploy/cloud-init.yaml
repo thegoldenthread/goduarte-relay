@@ -1,0 +1,41 @@
+#cloud-config
+# Paste into "User data" when creating the DigitalOcean droplet (Ubuntu 24.04).
+package_update: true
+package_upgrade: true
+packages:
+  - git
+  - curl
+  - ufw
+  - unattended-upgrades
+  - debian-keyring
+  - debian-archive-keyring
+  - apt-transport-https
+  - gnupg
+write_files:
+  - path: /etc/apt/apt.conf.d/52goduarte-auto-reboot
+    content: |
+      Unattended-Upgrade::Automatic-Reboot "true";
+      Unattended-Upgrade::Automatic-Reboot-Time "09:30";
+  - path: /etc/ssh/sshd_config.d/60-goduarte.conf
+    content: |
+      PasswordAuthentication no
+      KbdInteractiveAuthentication no
+runcmd:
+  - systemctl reload ssh || true
+  - dpkg-reconfigure -f noninteractive unattended-upgrades
+  - curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+  - apt-get install -y nodejs
+  - curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+  - curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' -o /etc/apt/sources.list.d/caddy-stable.list
+  - chmod o+r /usr/share/keyrings/caddy-stable-archive-keyring.gpg /etc/apt/sources.list.d/caddy-stable.list
+  - apt-get update
+  - apt-get install -y caddy
+  - ufw default deny incoming
+  - ufw default allow outgoing
+  - ufw allow 22/tcp
+  - ufw allow 80/tcp
+  - ufw allow 443/tcp
+  - ufw --force enable
+  - mkdir -p /opt/goduarte-relay
+  - git clone https://github.com/thegoldenthread/goduarte-relay.git /opt/goduarte-relay/repo
+  - bash /opt/goduarte-relay/repo/deploy/install.sh

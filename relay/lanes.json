@@ -1,0 +1,9 @@
+{
+  "_note": "One lane per business or client. Each lane gets its own token (generated on the server, never stored here) and may reach only its own hosts, written as host or host:port. Confirm SanMar's endpoints against their integration guide once access is approved.",
+  "lanes": {
+    "moxie": {
+      "description": "Moxie Graphic Productions: vendor catalogs, pricing and ordering",
+      "hosts": ["ws.sanmar.com:8080", "uat-ws.sanmar.com:8080", "api.ipify.org"]
+    }
+  }
+}
